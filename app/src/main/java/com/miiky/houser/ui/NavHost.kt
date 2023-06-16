@@ -1,0 +1,55 @@
+package com.miiky.houser.ui
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.miiky.houser.ui.screens.sesion.Code
+import com.miiky.houser.ui.screens.Loading
+import com.miiky.houser.ui.screens.sesion.Login
+import com.miiky.houser.ui.screens.Master
+import com.miiky.houser.ui.screens.Offline
+import com.miiky.houser.ui.screens.sesion.Password
+import com.miiky.houser.ui.screens.sesion.Signup
+import com.miiky.houser.ui.screens.secret.Direccion
+
+@Composable
+fun NavigationMain(
+    tema: MutableState<Boolean>
+) {
+    val navControll = rememberNavController()
+    NavHost(
+        navController = navControll,
+        startDestination = "loading",
+    ){
+        composable("loading"){
+            Loading(navHost = navControll)
+        }
+        composable("login"){
+            Login(navHost = navControll)
+        }
+        composable("signup"){
+            Signup(navHost = navControll)
+        }
+        composable("code"){
+            Code(navHost = navControll)
+        }
+        composable("master"){
+            Master(navHost = navControll)
+        }
+        composable("offline"){
+            Offline(navHost = navControll)
+        }
+        composable("setpassword"){
+            Password(navHost = navControll, extra = "Signup")
+        }
+        composable("changepassword"){
+            Password(navHost = navControll, extra = "Change")
+        }
+        // remover XD
+        composable("direccion"){
+            Direccion(navHost = navControll, tema = tema)
+        }
+    }
+}

@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Houser</string>
+
+    <string name="login">Ingresar</string>
+    <string name="signup">Registrarse</string>
+    <string name="forgot">Olvidaste tu contraseña?</string>
+
+    <string name="name">Nombres</string>
+    <string name="lastname">Apellidos</string>
+    <string name="username">Nombre de usuario</string>
+    <string name="email">Correo</string>
+    <string name="password">Contraseña</string>
+    <string name="repeatpassword">Repetir Contraseña</string>
+
+    <string name="code">Codigo</string>
+    <string name="getcode">Obtener codigo</string>
+    <string name="codenotvalid">Codigo no valido</string>
+    <string name="changepassword">Cambiar contraseña</string>
+
+    <string name="emailnotvaliid">Correo no valido</string>
+
+    <string name="empty">*Campo vacio</string>
+    <string name="password_missed">Contraseña incorrecta</string>
+    <string name="passwordnotmatch">No coincide la contraseña</string>
+
+    <string name="home">Inicio</string>
+    <string name="notifications">Notificaciones</string>
+    <string name="account">Mi cuenta</string>
+
+    <string name="calculator">Calculadora</string>
+    <string name="todo">Lista de tareas</string>
+    <string name="unit">Conversor</string>
+
+    <string name="main">Inicio</string>
+    <string name="crap">Utilidades</string>
+
+</resources>
