@@ -1,4 +1,4 @@
-package com.miiky.houser.ui.screens.sesion
+package com.miiky.houser.ui.screens.session
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

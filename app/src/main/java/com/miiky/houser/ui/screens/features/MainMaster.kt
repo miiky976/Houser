@@ -23,12 +23,18 @@ import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +44,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.airbnb.lottie.LottieProperty
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.miiky.houser.R
+import com.miiky.houser.ui.BottomAnimatedItem
 import com.miiky.houser.ui.BottomNavItem
 import com.miiky.houser.ui.space_bottom
 import com.miiky.houser.ui.spacing
@@ -49,25 +63,45 @@ fun MainMaster(
     navHost: NavHostController = NavHostController(LocalContext.current),
 ) {
     val navControl = rememberNavController()
-
-    val items = listOf(
-        BottomNavItem(
+    // Iconos antiguos :)
+//    val items = listOf(
+//        BottomNavItem(
+//            stringResource(id = R.string.home),
+//            Icons.Outlined.Home,
+//            "home",
+//            Icons.Rounded.Home
+//        ),
+//        BottomNavItem(
+//            stringResource(id = R.string.notifications),
+//            Icons.Outlined.Notifications,
+//            "notifications",
+//            Icons.Rounded.NotificationsActive
+//        ),
+//        BottomNavItem(
+//            stringResource(id = R.string.account),
+//            Icons.Outlined.Face,
+//            "account",
+//            Icons.Rounded.Face
+//        )
+//    )
+    val anitems = listOf(
+        BottomAnimatedItem(
             stringResource(id = R.string.home),
-            Icons.Outlined.Home,
+            LottieCompositionSpec.RawRes(R.raw.home),
             "home",
-            Icons.Rounded.Home
+            remember { mutableStateOf(false) }
         ),
-        BottomNavItem(
+        BottomAnimatedItem(
             stringResource(id = R.string.notifications),
-            Icons.Outlined.Notifications,
+            LottieCompositionSpec.RawRes(R.raw.bell),
             "notifications",
-            Icons.Rounded.NotificationsActive
+            remember { mutableStateOf(false) }
         ),
-        BottomNavItem(
+        BottomAnimatedItem(
             stringResource(id = R.string.account),
-            Icons.Outlined.Face,
+            LottieCompositionSpec.RawRes(R.raw.settings),
             "account",
-            Icons.Rounded.Face
+            remember { mutableStateOf(false) }
         )
     )
 
@@ -95,12 +129,70 @@ fun MainMaster(
                 Account(navHost = navControl)
             }
         }
+        // Linea de circunvalacion antigua sobre la que corria el bottom navigation con iconos estaticos
+//        NavigationBar(modifier = modifier.fillMaxWidth()) {
+//            items.forEach { item ->
+//                val selected = item.route == backStackEntry.value?.destination?.route
+//                NavigationBarItem(
+//                    selected = selected,
+//                    onClick = { navControl.navigate(item.route) },
+//                    label = {
+//                        Text(
+//                            text = item.title,
+//                            fontWeight = FontWeight.SemiBold,
+//                        )
+//                    },
+//                    icon = {
+//                        Crossfade(selected, label = "Justa") {
+//                            if (!it) {
+//                                Icon(
+//                                    imageVector = item.icon,
+//                                    contentDescription = "${item.title} Icon",
+//                                )
+//                            } else {
+//                                Icon(
+//                                    imageVector = item.alticon,
+//                                    contentDescription = "${item.title} Icon",
+//                                )
+//                            }
+//                        }
+//
+//                    },
+//                    alwaysShowLabel = false
+//                )
+//            }
+//        }
         NavigationBar(modifier = modifier.fillMaxWidth()) {
-            items.forEach { item ->
+            anitems.forEach { item ->
+                val icon by rememberLottieComposition(spec = item.icon)
                 val selected = item.route == backStackEntry.value?.destination?.route
+                val prog by animateLottieCompositionAsState(
+                    composition = icon,
+                    isPlaying = item.play.value,
+                    speed = 1.5f
+                )
+                val props = rememberLottieDynamicProperties(
+                    rememberLottieDynamicProperty(
+                        property = LottieProperty.STROKE_COLOR,
+                        value = MaterialTheme.colorScheme.error.toArgb(),
+                        keyPath = arrayOf(
+                            "home",
+                            "bell",
+                            "settings",
+                            "Stroke 1",
+                            "ADBE Vector Group",
+                            "ADBE Vector Graphic - Stroke"
+                        )
+                    )
+                )
                 NavigationBarItem(
                     selected = selected,
-                    onClick = { navControl.navigate(item.route) },
+                    onClick = {
+                        if (prog == 1f || prog == 0f) {
+                            item.play.value = !item.play.value
+                        }
+                        navControl.navigate(item.route)
+                    },
                     label = {
                         Text(
                             text = item.title,
@@ -108,41 +200,33 @@ fun MainMaster(
                         )
                     },
                     icon = {
-                        Crossfade(selected, label = "Justa") {
-                            if (!it) {
-                                Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = "${item.title} Icon",
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = item.alticon,
-                                    contentDescription = "${item.title} Icon",
-                                )
+                        LottieAnimation(composition = icon, progress = { prog }, dynamicProperties = props)
+                        LaunchedEffect(prog) {
+                            if (item.play.value && prog == 1f) {
+                                item.play.value = false
                             }
                         }
-
                     },
-                    alwaysShowLabel = false
+                    alwaysShowLabel = false,
                 )
             }
         }
     }
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(bottom = space_bottom * 2, end = spacing),
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        FloatingActionButton(onClick = { /*TODO*/ }, modifier = modifier) {
-            Icon(Icons.Default.MyLocation, contentDescription = null)
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        ExtendedFloatingActionButton(onClick = { /*TODO*/ }, modifier = modifier) {
-            Icon(Icons.Default.Navigation, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "FAB Extended")
-        }
-    }
+//    Column(
+//        modifier = modifier
+//            .fillMaxSize()
+//            .padding(bottom = space_bottom * 2, end = spacing),
+//        horizontalAlignment = Alignment.End,
+//        verticalArrangement = Arrangement.Bottom
+//    ) {
+//        FloatingActionButton(onClick = { /*TODO*/ }, modifier = modifier) {
+//            Icon(Icons.Default.MyLocation, contentDescription = null)
+//        }
+//        Spacer(modifier = Modifier.height(8.dp))
+//        ExtendedFloatingActionButton(onClick = { /*TODO*/ }, modifier = modifier) {
+//            Icon(Icons.Default.Navigation, contentDescription = null)
+//            Spacer(modifier = Modifier.width(8.dp))
+//            Text(text = "FAB Extended")
+//        }
+//    }
 }

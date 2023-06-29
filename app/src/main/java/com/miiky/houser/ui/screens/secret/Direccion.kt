@@ -23,7 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import com.miiky.houser.ui.direccion
+import com.miiky.houser.data.Themed
+import com.miiky.houser.data.direction
 import com.miiky.houser.ui.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +34,7 @@ fun Direccion(
     navHost: NavHostController = NavHostController(LocalContext.current),
     tema: MutableState<Boolean>
 ) {
-    val IP = remember { mutableStateOf(direccion) }
+    val IP = remember { mutableStateOf(direction) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -43,10 +44,10 @@ fun Direccion(
         verticalArrangement = Arrangement.Center,
     ) {
         OutlinedTextField(value = IP.value, onValueChange = {IP.value = it}, modifier = modifier.fillMaxWidth())
-        Button(onClick = { direccion = IP.value }) {
+        Button(onClick = { direction = IP.value }) {
             Icon(Icons.Rounded.Info, contentDescription = null)
             Text(text = "Cambiar IP")
         }
-        Switch(checked = tema.value, onCheckedChange = {tema.value = it})
+        Switch(checked = Themed.value, onCheckedChange = {Themed.value = it})
     }
 }

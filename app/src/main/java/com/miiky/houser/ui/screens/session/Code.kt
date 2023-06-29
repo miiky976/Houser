@@ -1,4 +1,4 @@
-package com.miiky.houser.ui.screens.sesion
+package com.miiky.houser.ui.screens.session
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -19,12 +19,8 @@ import androidx.navigation.NavHostController
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.google.gson.Gson
-import com.miiky.houser.models.User
+import com.miiky.houser.data.direction
 import com.miiky.houser.ui.EmailTextField
-import com.miiky.houser.ui.InputTextField
-import com.miiky.houser.ui.direccion
-import com.miiky.houser.ui.hashString
 import com.miiky.houser.ui.spacing
 import org.json.JSONObject
 
@@ -47,7 +43,7 @@ fun Code(
         Text(text = "Obtener codigo de recuperación")
         EmailTextField(email = email, error = error)
         Button(onClick = {
-            var url = "http://$direccion:3000/recovery/${email.value}"
+            var url = "http://$direction:3000/recovery/${email.value}"
 
             var queue = Volley.newRequestQueue(context)
 

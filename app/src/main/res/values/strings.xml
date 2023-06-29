@@ -33,5 +33,11 @@
 
     <string name="main">Inicio</string>
     <string name="crap">Utilidades</string>
+    <string name="exit">Cerrar sesión</string>
+    
+    <string name="edit">Editar</string>
+    <string name="save">Guardar</string>
+    <string name="mediaselect">Seleccionar multimedia</string>
+    <string name="notexists">No existe</string>
 
 </resources>

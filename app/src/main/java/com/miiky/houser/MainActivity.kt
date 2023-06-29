@@ -12,8 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
+import com.miiky.houser.data.Themed
 import com.miiky.houser.ui.NavigationMain
-import com.miiky.houser.ui.screens.sesion.Login
+import com.miiky.houser.ui.screens.session.Login
 import com.miiky.houser.ui.theme.HouserTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             val tema = remember { mutableStateOf(false) }
-            HouserTheme (dynamicColor = tema.value) {
+            HouserTheme (dynamicColor = Themed.value, darkTheme = false) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),

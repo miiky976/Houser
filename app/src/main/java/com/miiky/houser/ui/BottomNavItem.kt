@@ -1,11 +1,21 @@
 package com.miiky.houser.ui
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.HomeWork
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
-import com.miiky.houser.R
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.compose.LottieCompositionResult
+import com.airbnb.lottie.compose.LottieCompositionSpec
 
-data class BottomNavItem(val title: String,val icon: ImageVector,val route: String, val alticon: ImageVector)
+data class BottomNavItem(
+    val title: String,
+    val icon: ImageVector,
+    val route: String,
+    val alticon: ImageVector,
+)
+
+data class BottomAnimatedItem(
+    val title: String,
+    val icon: LottieCompositionSpec,
+    val route: String,
+    val play: MutableState<Boolean>
+)

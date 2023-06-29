@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+//    id("com.google.devtools.ksp")
 }
 
 android {
@@ -68,12 +69,20 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+    // new
     implementation(libs.lottie.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation("androidx.compose.animation:animation-graphics")
+    implementation(libs.androidx.animation.graphics)
     implementation(libs.androidx.material.icons.extended)
-//    implementation (libs.retrofit)
     implementation (libs.converter.gson)
-//    implementation (libs.okhttp)
     implementation(libs.volley)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.activity.compose.v161)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.coil.compose)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }

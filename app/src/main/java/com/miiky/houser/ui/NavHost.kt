@@ -5,13 +5,13 @@ import androidx.compose.runtime.MutableState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.miiky.houser.ui.screens.sesion.Code
+import com.miiky.houser.ui.screens.session.Code
 import com.miiky.houser.ui.screens.Loading
-import com.miiky.houser.ui.screens.sesion.Login
+import com.miiky.houser.ui.screens.session.Login
 import com.miiky.houser.ui.screens.Master
 import com.miiky.houser.ui.screens.Offline
-import com.miiky.houser.ui.screens.sesion.Password
-import com.miiky.houser.ui.screens.sesion.Signup
+import com.miiky.houser.ui.screens.session.Password
+import com.miiky.houser.ui.screens.session.Signup
 import com.miiky.houser.ui.screens.secret.Direccion
 
 @Composable

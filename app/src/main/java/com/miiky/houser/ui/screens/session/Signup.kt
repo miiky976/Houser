@@ -1,4 +1,4 @@
-package com.miiky.houser.ui.screens.sesion
+package com.miiky.houser.ui.screens.session
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -24,22 +24,15 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.miiky.houser.R
+import com.miiky.houser.data.direction
 import com.miiky.houser.models.User
 import com.miiky.houser.ui.EmailTextField
 import com.miiky.houser.ui.InputTextField
 import com.miiky.houser.ui.PasswordTexField
-import com.miiky.houser.ui.direccion
 import com.miiky.houser.ui.hashString
 import com.miiky.houser.ui.space_top
 import com.miiky.houser.ui.spacing
 import org.json.JSONObject
-//import okhttp3.Call
-//import okhttp3.Callback
-//import okhttp3.FormBody
-//import okhttp3.OkHttpClient
-//import okhttp3.Request
-//import okhttp3.Response
-//import java.io.IOException
 
 @Composable
 fun Signup(
@@ -114,7 +107,7 @@ fun Signup(
                 password2_error.value = 3
                 return@Button
             }
-            var url = "http://$direccion:3000/users"
+            var url = "http://$direction:3000/users"
 
             var queue = Volley.newRequestQueue(context)
 

@@ -10,7 +10,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,6 +22,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.miiky.houser.R
+import com.miiky.houser.data.persistent.StoreSession
 import com.miiky.houser.ui.space_top
 import com.miiky.houser.ui.spacing
 import kotlinx.coroutines.delay
@@ -29,10 +32,19 @@ fun Loading(
     modifier: Modifier = Modifier,
     navHost: NavHostController = NavHostController(LocalContext.current),
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val dataStore = StoreSession(context)
+    val saved = dataStore.getEmail.collectAsState(initial = "")
+
     val icon by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.loading))
     LaunchedEffect(key1 = true){
-        delay(2000)
-        navHost.navigate("login")
+        delay(1000)
+        if (saved.value == ""){
+            navHost.navigate("login")
+        }else {
+            navHost.navigate("master")
+        }
     }
     Column(
         modifier = modifier

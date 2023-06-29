@@ -37,21 +37,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.miiky.houser.R
 import java.security.MessageDigest
+import java.util.prefs.Preferences
 
 val spacing = 16.dp
 val space_top = 64.dp
 val space_bottom = 64.dp
 val anim = -20
-
-var direccion = "192.168.0.8"
-
-
 
 @Composable
 fun AnimatedAppIcon(modifier: Modifier = Modifier){
@@ -239,4 +237,9 @@ fun InputTextField(
             Icon(icon, contentDescription = null)
         }
     )
+}
+
+@Composable
+fun AnimatedButton(lottie: LottieCompositionSpec, click: ()->Unit) {
+
 }
