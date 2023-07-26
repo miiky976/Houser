@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,8 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.miiky.houser.ui.spacing
+import com.udojava.evalex.Expression
 
 @Composable
 fun Calculator(
@@ -27,14 +31,11 @@ fun Calculator(
 ) {
     val result = remember { mutableStateOf("") }
     val calcul = remember { mutableStateOf("") }
-    val buttonValues = listOf(
-        "AC", "(", ")", "/",
-        "7", "8", "9", "*",
-        "4", "5", "6", "-",
-        "1", "2", "3", "+",
-        "0", ".", "del", "=",
-    )
     val buttons = listOf(
+        CalculatorButtonItem("√") {calcul.value += "sqrt("},
+        CalculatorButtonItem("^") { calcul.value += "^" },
+        CalculatorButtonItem("cos") { calcul.value += "cos(" },
+        CalculatorButtonItem("sin") { calcul.value += "sin(" },
         CalculatorButtonItem("AC") {
             calcul.value = ""
             result.value = ""
@@ -59,7 +60,15 @@ fun Calculator(
         CalculatorButtonItem("del") {
             calcul.value = calcul.value.dropLast(1)
         },
-        CalculatorButtonItem("=") {},
+        CalculatorButtonItem("=") {
+            try {
+                result.value = Expression(calcul.value).eval().toString()
+            }catch (e: ArithmeticException){
+                result.value = e.message.toString()
+            }catch (e: Exception){
+                result.value = e.message.toString()
+            }
+        },
     )
     Column(
         modifier = modifier
@@ -72,19 +81,20 @@ fun Calculator(
     ) {
         Text(
             text = result.value,
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = modifier.padding(vertical = spacing)
+            modifier = modifier.padding(vertical = spacing),
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.displayLarge
         )
         Text(
             text = calcul.value,
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = modifier.padding(vertical = spacing)
+            modifier = modifier.padding(vertical = spacing),
+            style = MaterialTheme.typography.displayLarge
         )
         Spacer(modifier = modifier.weight(1f))
         LazyVerticalGrid(columns = GridCells.Fixed(4)) {
             this.items(buttons) {
                 ElevatedButton(
-                    onClick = { it.action() }, modifier = modifier.padding(spacing / 2),
+                    onClick = { it.action() }, modifier = modifier.padding(spacing / 4),
                 ) {
                     Text(text = it.title, fontSize = 42.sp)
                 }

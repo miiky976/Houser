@@ -36,7 +36,7 @@ fun UserMaster(
 @Composable
 fun UserNavigation() {
     val usernav = rememberNavController()
-    NavHost(navController = usernav, startDestination = "main"){
+    NavHost(navController = usernav, startDestination = "edit"){
         composable("edit"){
             UserEdit(navHost = usernav)
         }

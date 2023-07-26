@@ -8,7 +8,8 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 
 fun loginConnect(context: Context, email: String, pass: String, muta: MutableLiveData<String>) {
-    val url = "http://$direction:3000/user/credentials"
+    val dir = direction.value
+    val url = "http://${direction.value}:3000/user/credentials"
     val queue = Volley.newRequestQueue(context)
     val body = JSONObject().apply {
         put("email", email)

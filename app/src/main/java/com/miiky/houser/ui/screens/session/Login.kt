@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.miiky.houser.R
 import com.miiky.houser.data.loginConnect
 import com.miiky.houser.data.persistent.StoreSession
@@ -39,6 +42,7 @@ import com.miiky.houser.ui.hashString
 import com.miiky.houser.ui.spacing
 import com.miiky.houser.ui.theme.HouserTheme
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -49,7 +53,8 @@ fun Login(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val dataStore = StoreSession(context)
-    val response = MutableLiveData("")/*remember { mutableStateOf("") }*/
+    val response = MutableLiveData("")
+    val res = remember { mutableStateOf("") }
 
     val color = MaterialTheme.colorScheme.secondary
 
@@ -76,7 +81,7 @@ fun Login(
                 .combinedClickable(
                     onClick = {
                         Toast
-                            .makeText(context, direction, Toast.LENGTH_SHORT)
+                            .makeText(context, direction.value, Toast.LENGTH_SHORT)
                             .show()
                     },
                     onLongClick = { navHost.navigate("direccion") },
@@ -127,73 +132,68 @@ fun Login(
                         password_error.value = 1
                         return@Button
                     }
-                    loginConnect(context, email.value, hashString(password.value), response)
-                    response.observe(context as LifecycleOwner){
-                        when (it){
-                            "Correct"-> {
-                                scope.launch {
-                                    dataStore.saveSession(email.value)
-                                }
-                                navHost.navigate("master")
-                            }
-                            "Incorrect"->{
-                                Toast.makeText(context, missed, Toast.LENGTH_SHORT).show()
-                            }
-                            "Doesnt Exists"->{
-                                Toast.makeText(context, notexists, Toast.LENGTH_SHORT).show()
-                            }
-//                            else-> {
-//                                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-//                            }
-                        }
-                    }
-//                    when(response.value){
-//                        "Correct"-> {
-//                            scope.launch {
-//                                dataStore.saveSession(email.value)
-//                            }
-//                            navHost.navigate("master")
-//                        }
-//                        "Incorrect"->{
-//                            Toast.makeText(context, missed, Toast.LENGTH_SHORT).show()
-//                        }
-//                        "Exist?"->{
-//                            Toast.makeText(context, notexists, Toast.LENGTH_SHORT).show()
-//                        }
-//                        else-> {
-//                            Toast.makeText(context, response.value, Toast.LENGTH_SHORT).show()
-//                        }
-//                    }
-//                    var msg = "Problems"
-//                    val url = "http://$direction:3000/user/credentials"
-//                    val queue = Volley.newRequestQueue(context)
-//                    val body = JSONObject().apply {
-//                        put("email", email.value)
-//                        put("pass", hashString(password.value))
-//                    }
-//                    // val usr = User(email = email.value, username = null, pass = pass, name = null, lastname = null)
-//                    val request = JsonObjectRequest(
-//                        Request.Method.POST, url, /*JSONObject(Gson().toJson(usr))*/body,
-//                        { response ->
-//                            if (response.getString("Status") == "Correct"){
-//                                msg = "Correct"
+//                    loginConnect(context, email.value, hashString(password.value), response)
+//                    response.observe(context as LifecycleOwner){
+//                        when (it){
+//                            "Correct"-> {
 //                                scope.launch {
 //                                    dataStore.saveSession(email.value)
 //                                }
 //                                navHost.navigate("master")
-//                            }else if(response.getString("Status") == "Incorrect") {
-//                                msg = "Incorrect"
+//                            }
+//                            "Incorrect"->{
 //                                Toast.makeText(context, missed, Toast.LENGTH_SHORT).show()
 //                            }
-//                        },
-//                        { error ->
-//                            msg = if (error.equals("record not found")){
-//                                "Exist?"
-//                            } else {
-//                                error.toString()
+//                            "Doesnt Exists"->{
+//                                Toast.makeText(context, notexists, Toast.LENGTH_SHORT).show()
 //                            }
-//                        })
-//                    queue.add(request)
+////                            else-> {
+////                                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+////                            }
+//                        }
+//                    }
+                    val url = "http://${direction.value}:3000/user/data"
+                    val queue = Volley.newRequestQueue(context)
+                    val body = JSONObject().apply {
+                        put("email", email.value)
+                        put("pass", hashString(password.value))
+                    }
+                    val request = JsonObjectRequest(
+                        Request.Method.POST, url, body,
+                        { response ->
+                            if (response.has("Status")){
+                                val status = response.getString("Status")
+
+                                when (status) {
+                                    "Incorrect" -> {
+                                        Toast.makeText(context, missed, Toast.LENGTH_SHORT).show()
+                                    }
+                                    "Doesnt Exists" -> {
+                                        Toast.makeText(context, notexists, Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }else{
+                                val user = response.getString("user")
+                                val name = response.getString("name")
+                                val last = response.getString("last")
+                                val image = response.getString("Image")
+                                val id = response.getString("ID")
+                                scope.launch {
+                                    dataStore.saveSession(email.value)
+                                    dataStore.saveName(name)
+                                    dataStore.saveUser(user)
+                                    dataStore.saveLastname(last)
+                                    dataStore.saveImage(image)
+                                    dataStore.saveID(id)
+                                }
+                                Toast.makeText(context, "El ID es: $id", Toast.LENGTH_SHORT).show()
+                                navHost.navigate("master")
+                            }
+                        },
+                        { error ->
+                            Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                        })
+                    queue.add(request)
                 }, modifier = modifier.weight(1f)
             ) {
                 Text(text = stringResource(id = R.string.login))

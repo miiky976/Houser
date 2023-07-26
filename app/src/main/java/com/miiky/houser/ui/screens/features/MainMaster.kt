@@ -54,6 +54,7 @@ import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.miiky.houser.R
 import com.miiky.houser.ui.BottomAnimatedItem
 import com.miiky.houser.ui.BottomNavItem
+import com.miiky.houser.ui.screens.house.CreateHouse
 import com.miiky.houser.ui.space_bottom
 import com.miiky.houser.ui.spacing
 
@@ -127,6 +128,9 @@ fun MainMaster(
             }
             composable("account") {
                 Account(navHost = navControl)
+            }
+            composable("create"){
+                CreateHouse(navHost = navControl)
             }
         }
         // Linea de circunvalacion antigua sobre la que corria el bottom navigation con iconos estaticos

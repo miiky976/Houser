@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.0-alpha09"
+agp = "8.2.0-alpha13"
 androidx-activity-compose = "1.6.1"
 animation-graphics = "1.4.3"
 coil-compose = "2.2.0"

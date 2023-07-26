@@ -1,4 +1,4 @@
-package com.miiky.houser.ui.screens.secret
+package com.miiky.houser.ui.screens.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,12 +28,11 @@ import com.miiky.houser.ui.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Direccion(
+fun SettingsMaster(
     modifier: Modifier = Modifier,
     navHost: NavHostController = NavHostController(LocalContext.current),
-    tema: MutableState<Boolean>
 ) {
-    val IP = remember { mutableStateOf(direction) }
+//    val IP = remember { mutableStateOf(direction) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -43,11 +41,11 @@ fun Direccion(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        OutlinedTextField(value = IP.value, onValueChange = {IP.value = it}, modifier = modifier.fillMaxWidth())
-        Button(onClick = { direction = IP.value }) {
-            Icon(Icons.Rounded.Info, contentDescription = null)
-            Text(text = "Cambiar IP")
-        }
+        OutlinedTextField(value = direction.value, onValueChange = { direction.value = it}, modifier = modifier.fillMaxWidth())
+//        Button(onClick = { direction = mDirection.value }) {
+//            Icon(Icons.Rounded.Info, contentDescription = null)
+//            Text(text = "Cambiar IP")
+//        }
         Switch(checked = Themed.value, onCheckedChange = {Themed.value = it})
     }
 }

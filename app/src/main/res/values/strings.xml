@@ -11,6 +11,7 @@
     <string name="email">Correo</string>
     <string name="password">Contraseña</string>
     <string name="repeatpassword">Repetir Contraseña</string>
+    <string name="trycode">Enviar codigo</string>
 
     <string name="code">Codigo</string>
     <string name="getcode">Obtener codigo</string>
@@ -34,6 +35,7 @@
     <string name="main">Inicio</string>
     <string name="crap">Utilidades</string>
     <string name="exit">Cerrar sesión</string>
+    <string name="settings">Configuracion</string>
     
     <string name="edit">Editar</string>
     <string name="save">Guardar</string>

@@ -22,14 +22,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            val tema = remember { mutableStateOf(false) }
             HouserTheme (dynamicColor = Themed.value, darkTheme = false) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavigationMain(tema)
+                    NavigationMain()
                 }
             }
         }

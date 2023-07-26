@@ -1,7 +1,6 @@
 package com.miiky.houser.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,11 +11,10 @@ import com.miiky.houser.ui.screens.Master
 import com.miiky.houser.ui.screens.Offline
 import com.miiky.houser.ui.screens.session.Password
 import com.miiky.houser.ui.screens.session.Signup
-import com.miiky.houser.ui.screens.secret.Direccion
+import com.miiky.houser.ui.screens.settings.SettingsMaster
 
 @Composable
 fun NavigationMain(
-    tema: MutableState<Boolean>
 ) {
     val navControll = rememberNavController()
     NavHost(
@@ -49,7 +47,7 @@ fun NavigationMain(
         }
         // remover XD
         composable("direccion"){
-            Direccion(navHost = navControll, tema = tema)
+            SettingsMaster(navHost = navControll)
         }
     }
 }

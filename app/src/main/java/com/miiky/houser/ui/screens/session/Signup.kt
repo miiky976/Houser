@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -107,20 +108,24 @@ fun Signup(
                 password2_error.value = 3
                 return@Button
             }
-            var url = "http://$direction:3000/users"
+            val url = "http://${direction.value}:3000/user/new"
 
-            var queue = Volley.newRequestQueue(context)
+            val queue = Volley.newRequestQueue(context)
+            val body = JSONObject().apply {
+                put("email", email.value)
+                put("pass", hashString(password1.value))
+                put("name", name.value)
+                put("last", lastname.value)
+                put("user", user.value)
+            }
 
-            var usr = User(email = email.value, username = user.value, pass = hashString(password1.value), name = name.value, lastname = lastname.value)
             val request = JsonObjectRequest(
-                Request.Method.POST, url, JSONObject(Gson().toJson(usr)),
+                Request.Method.POST, url, body,
                 { response ->
-                    if (response == null){
-                        return@JsonObjectRequest
-                    }
-                    else{
-                        Toast.makeText(context, "Usuario insertado", Toast.LENGTH_SHORT).show()
+                    if (response.getString("Status")=="Correct"){
                         navHost.navigate("login")
+                    }else if (response.getString("Status")=="Exists") {
+                        Toast.makeText(context, "Ya existe", Toast.LENGTH_SHORT).show()
                     }
                 },
                 { error ->
