@@ -146,8 +146,10 @@ fun UserEdit(
                 }
             }
             FilledIconButton(onClick = {
-                openDialog.value = true
-
+                singlePhotoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+//                openDialog.value = true
             }) {
                 Icon(Icons.Rounded.Edit, contentDescription = null)
             }
@@ -248,19 +250,19 @@ fun UserEdit(
             }
         }
     }
-    if (openDialog.value) {
-        MediaSelect(openDialog = openDialog,
-            photos = {
-                singlePhotoPickerLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            }, camera = {
-//                val uri = ComposeFileProvider.getImageUri(context)
-//                selectedImageUri = uri
-//                cameraLauncher.launch(uri)
-            }
-        )
-    }
+//    if (openDialog.value) {
+//        MediaSelect(openDialog = openDialog,
+//            photos = {
+//                singlePhotoPickerLauncher.launch(
+//                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+//                )
+//            }, camera = {
+////                val uri = ComposeFileProvider.getImageUri(context)
+////                selectedImageUri = uri
+////                cameraLauncher.launch(uri)
+//            }
+//        )
+//    }
 }
 
 @Composable

@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,13 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Houseboat
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.LocationOn
@@ -29,7 +28,9 @@ import androidx.compose.material.icons.rounded.OtherHouses
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.Rule
 import androidx.compose.material.icons.rounded.TempleHindu
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,40 +49,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.miiky.houser.R
+import com.google.gson.Gson
 import com.miiky.houser.data.direction
+import com.miiky.houser.data.houseId
 import com.miiky.houser.data.persistent.StoreSession
+import com.miiky.houser.models.Houses
 import com.miiky.houser.ui.InputTextField
-import com.miiky.houser.ui.hashString
 import com.miiky.houser.ui.space_top
 import com.miiky.houser.ui.spacing
-import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateHouse(
+fun EditHouse(
     modifier: Modifier = Modifier,
     navHost: NavHostController = NavHostController(LocalContext.current),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val dataStore = StoreSession(context)
+
+    var sure = remember { mutableStateOf(false) }
 
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
@@ -92,22 +94,45 @@ fun CreateHouse(
         onResult = { uri -> selectedImageUri = uri }
     )
 
-    val id = dataStore.getID.collectAsState(initial = "")
-
     val created = remember { mutableStateOf(false) }
 
-    val title = remember { mutableStateOf("title") }
+    val id = dataStore.getID.collectAsState(initial = "")
+
+    val title = remember { mutableStateOf("") }
     val title_error = remember { mutableStateOf(0) }
-    val subtitle = remember { mutableStateOf("subtitle") }
+    val subtitle = remember { mutableStateOf("") }
     val subtitle_error = remember { mutableStateOf(0) }
-    val location = remember { mutableStateOf("location") }
+    val location = remember { mutableStateOf("") }
     val location_error = remember { mutableStateOf(0) }
-    val legal = remember { mutableStateOf("legal") }
-    val legal_error = remember { mutableStateOf(0) }
-    val rooms = remember { mutableStateOf(3) }
+    val rooms = remember { mutableStateOf(0) }
     val rooms_error = remember { mutableStateOf(0) }
-    val floors = remember { mutableStateOf(1) }
+    val floors = remember { mutableStateOf(0) }
     val floors_error = remember { mutableStateOf(0) }
+    val legal = remember { mutableStateOf("") }
+    val legal_error = remember { mutableStateOf(0) }
+
+    val url =
+        "http://${direction.value}:3000/house/${houseId.value}"
+    val queue = Volley.newRequestQueue(context)
+    // empty remember house mutable state
+    val house = remember { mutableStateOf(Houses(0, "", "", "", 0, 0, "", "", 0)) }
+    val request = StringRequest(
+        com.android.volley.Request.Method.GET, url,
+        {
+            val jause = Gson().fromJson(it, Houses::class.java)
+            house.value = jause
+        },
+        {}
+    )
+    queue.add(request)
+
+    title.value = house.value.title
+    subtitle.value = house.value.subtitle
+    location.value = house.value.location
+    rooms.value = house.value.rooms
+    floors.value = house.value.floors
+    legal.value = house.value.legal
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -164,7 +189,9 @@ fun CreateHouse(
                         Icon(Icons.Rounded.Add, contentDescription = null)
                     }
                 },
-                modifier = modifier.weight(1f).padding(end = spacing/2),
+                modifier = modifier
+                    .weight(1f)
+                    .padding(end = spacing / 2),
                 label = {
                     Text(text = "Habitaciones")
                 },
@@ -186,7 +213,9 @@ fun CreateHouse(
                         Icon(Icons.Rounded.Add, contentDescription = null)
                     }
                 },
-                modifier = modifier.weight(1f).padding(start = spacing/2),
+                modifier = modifier
+                    .weight(1f)
+                    .padding(start = spacing / 2),
                 label = {
                     Text(text = "Pisos")
                 },
@@ -200,13 +229,23 @@ fun CreateHouse(
                 .height(200.dp)
                 .padding(top = spacing)
         ) {
-            Box(modifier = modifier.fillMaxSize().clickable {
-                singlePhotoPickerLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            }
+            Box(modifier = modifier
+                .fillMaxSize()
+                .clickable {
+                    singlePhotoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
             ){
-                Icon(Icons.Rounded.OtherHouses, contentDescription = null, modifier = modifier.align(Alignment.Center))
+                Icon(
+                    Icons.Rounded.OtherHouses, contentDescription = null, modifier = modifier.align(
+                        Alignment.Center))
+                AsyncImage(
+                    model = "http://${direction.value}:3000/user/images/${house.value.img}",
+                    contentDescription = null,
+                    modifier = modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
                 AsyncImage(
                     model = selectedImageUri,
                     contentDescription = null,
@@ -250,7 +289,43 @@ fun CreateHouse(
                     return@Button
                 }
 
-                val url = "http://${direction.value}:3000/house/"
+                val url = "http://${direction.value}:3000/house/${houseId.value}"
+
+                if (selectedImageUri == null) {
+                    val client = OkHttpClient()
+                    val body = MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("title", title.value)
+                        .addFormDataPart("subtitle", subtitle.value)
+                        .addFormDataPart("location", location.value)
+                        .addFormDataPart("rooms", rooms.value.toString())
+                        .addFormDataPart("floors", floors.value.toString())
+                        .addFormDataPart("LegalStatus", legal.value)
+                        .addFormDataPart("UserID", id.value)
+                        .build()
+                    val request = Request.Builder()
+                        .url(url)
+                        .put(body)
+                        .build()
+
+                    client.newCall(request).enqueue(object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            println("Failed to execute request")
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            val responseBody = response.body?.string()
+                            val json = JSONObject(responseBody!!)
+                            val status = json.optString("Status")
+                            if (status == "Created") {
+                                created.value = true
+                            } else if (status == "Exists") {
+                                Toast.makeText(context, "Ya existe", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    })
+                    navHost.navigate("home")
+                    return@Button
+                }
 
                 val fileInputStream = context.contentResolver.openInputStream(selectedImageUri!!)
 
@@ -260,14 +335,14 @@ fun CreateHouse(
                     .addFormDataPart("title", title.value)
                     .addFormDataPart("subtitle", subtitle.value)
                     .addFormDataPart("location", location.value)
-                    .addFormDataPart("LegalStatus", legal.value)
                     .addFormDataPart("rooms", rooms.value.toString())
                     .addFormDataPart("floors", floors.value.toString())
+                    .addFormDataPart("legal", legal.value)
                     .addFormDataPart("UserID", id.value)
                     .build()
-                val request = okhttp3.Request.Builder()
+                val request = Request.Builder()
                     .url(url)
-                    .post(body)
+                    .put(body)
                     .build()
 
                 client.newCall(request).enqueue(object : Callback {
@@ -275,7 +350,7 @@ fun CreateHouse(
                         TODO("Not yet implemented")
                     }
 
-                    override fun onResponse(call: Call, response: okhttp3.Response) {
+                    override fun onResponse(call: Call, response: Response) {
                         val responseBody = response.body?.string()
                         val json = JSONObject(responseBody!!)
                         val status = json.optString("Status")
@@ -290,11 +365,76 @@ fun CreateHouse(
                 navHost.navigate("home")
             },
             modifier = modifier
-                .padding(bottom = space_top)
+                .padding(bottom = spacing)
                 .fillMaxWidth()
         ) {
-            Icon(Icons.Rounded.Add, contentDescription = null)
-            Text(text = "Agregar casa")
+            Icon(Icons.Rounded.Edit, contentDescription = null)
+            Text(text = "Editar casa")
         }
+        Button(onClick = {
+            sure.value = true
+        },
+            modifier = modifier
+                .padding(bottom = spacing)
+                .fillMaxWidth(),
+            // set the color of the button as the material error
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+        ) {
+            Icon(Icons.Rounded.Delete, contentDescription = null)
+            Text(text = "Eliminar casa")
+        }
+    }
+    if (sure.value){
+        AlertDialog(
+            onDismissRequest = {
+                sure.value = false
+            },
+            title = {
+                Text(text = "¿Estás seguro?")
+            },
+            text = {
+                Text(text = "Esta acción no se puede deshacer")
+            },
+            confirmButton = {
+                Button(onClick = {
+                    val deleted = mutableStateOf(false)
+                    val url = "http://${direction.value}:3000/house/${houseId.value}"
+                    val client = OkHttpClient()
+                    val request = Request.Builder()
+                        .url(url)
+                        .delete()
+                        .build()
+
+                    client.newCall(request).enqueue(object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            println("Failed to execute request")
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            val responseBody = response.body?.string()
+                            val json = JSONObject(responseBody!!)
+                            val status = json.optString("Status")
+                            if (status == "Se elimino correctamente") {
+                                sure.value = false
+                                deleted.value = true
+                            } else if (status == "Not found") {
+                                Toast.makeText(context, "No existe", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    })
+
+                    navHost.navigate("home")
+                }) {
+                    Text(text = "Sí")
+                }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    sure.value = false
+                }) {
+                    Text(text = "No")
+                }
+            }
+        )
     }
 }

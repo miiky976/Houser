@@ -118,7 +118,7 @@ fun HouseCard(
         Box {
             Column {
                 AsyncImage(
-                    model = house.img,
+                    model = "http://${direction.value}:3000/user/images/${house.img}",
                     contentDescription = null,
                     modifier = modifier
                         .fillMaxWidth()

@@ -40,11 +40,12 @@ fun Loading(
     val icon by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.loading))
     LaunchedEffect(key1 = true){
         delay(1000)
-        if (saved.value == ""){
-            navHost.navigate("login")
-        }else {
-            navHost.navigate("master")
-        }
+        navHost.navigate("login")
+//        if (saved.value == ""){
+//            navHost.navigate("login")
+//        }else {
+//            navHost.navigate("master")
+//        }
     }
     Column(
         modifier = modifier

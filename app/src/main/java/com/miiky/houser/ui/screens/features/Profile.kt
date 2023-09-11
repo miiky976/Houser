@@ -45,6 +45,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.miiky.houser.data.direction
+import com.miiky.houser.data.houseId
 import com.miiky.houser.data.persistent.StoreSession
 import com.miiky.houser.models.Houses
 import com.miiky.houser.ui.spacing
@@ -81,7 +82,7 @@ fun Account(
         )
         queue.add(request)
         for (house in houses.value) {
-            MineHouseCard(house = house)
+            MineHouseCard(house = house, navHost = navHost)
         }
     }
     Column(
@@ -104,14 +105,22 @@ fun Account(
 fun MineHouseCard(
     modifier: Modifier = Modifier,
     house: Houses,
+    navHost: NavHostController,
 ) {
+    val context = LocalContext.current
     Card(
         modifier.padding(bottom = spacing)
     ) {
-        Box {
+        Box(
+            modifier = modifier.clickable {
+                houseId.value = house.ID
+//                Toast.makeText(context, "${houseId.value}", Toast.LENGTH_SHORT).show()
+                navHost.navigate("edit")
+            }
+        ) {
             Column {
                 AsyncImage(
-                    model = house.img,
+                    model = "http://${direction.value}:3000/user/images/${house.img}",
                     contentDescription = null,
                     modifier = modifier
                         .fillMaxWidth()

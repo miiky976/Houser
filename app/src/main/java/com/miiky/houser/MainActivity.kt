@@ -12,12 +12,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.FragmentActivity
 import com.miiky.houser.data.Themed
 import com.miiky.houser.ui.NavigationMain
 import com.miiky.houser.ui.screens.session.Login
 import com.miiky.houser.ui.theme.HouserTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)

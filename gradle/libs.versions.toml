@@ -2,6 +2,8 @@
 agp = "8.2.0-alpha13"
 androidx-activity-compose = "1.6.1"
 animation-graphics = "1.4.3"
+appcompat = "1.6.1"
+biometric = "1.1.0"
 coil-compose = "2.2.0"
 converter-gson = "2.5.0"
 datastore = "1.0.0"
@@ -30,6 +32,9 @@ volley = "1.2.1"
 androidx-activity-compose-v161 = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity-compose" }
 androidx-animation-graphics = { module = "androidx.compose.animation:animation-graphics", version.ref = "animation-graphics" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
+androidx-biometric-ktx = { module = "androidx.biometric:biometric-ktx", version.ref = "biometric" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-android = { module = "androidx.datastore:datastore-android", version.ref = "datastore-android" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }

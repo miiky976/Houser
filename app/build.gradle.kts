@@ -86,4 +86,6 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation("com.udojava:EvalEx:2.7")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.biometric)
 }

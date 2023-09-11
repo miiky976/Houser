@@ -1,6 +1,8 @@
 package com.miiky.houser.ui.screens.session
 
 import android.widget.Toast
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,14 +11,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Fingerprint
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
@@ -33,6 +42,7 @@ import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.miiky.houser.R
+import com.miiky.houser.biometric.isBiometric
 import com.miiky.houser.data.loginConnect
 import com.miiky.houser.data.persistent.StoreSession
 import com.miiky.houser.data.direction
@@ -43,6 +53,7 @@ import com.miiky.houser.ui.spacing
 import com.miiky.houser.ui.theme.HouserTheme
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.security.MessageDigest
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -51,10 +62,14 @@ fun Login(
     navHost: NavHostController = NavHostController(LocalContext.current),
 ) {
     val context = LocalContext.current
+    val fragment = LocalContext.current as FragmentActivity
     val scope = rememberCoroutineScope()
     val dataStore = StoreSession(context)
+    val saved = dataStore.getEmail.collectAsState(initial = "")
     val response = MutableLiveData("")
     val res = remember { mutableStateOf("") }
+
+    val canAuth = isBiometric(fragment)
 
     val color = MaterialTheme.colorScheme.secondary
 
@@ -132,26 +147,6 @@ fun Login(
                         password_error.value = 1
                         return@Button
                     }
-//                    loginConnect(context, email.value, hashString(password.value), response)
-//                    response.observe(context as LifecycleOwner){
-//                        when (it){
-//                            "Correct"-> {
-//                                scope.launch {
-//                                    dataStore.saveSession(email.value)
-//                                }
-//                                navHost.navigate("master")
-//                            }
-//                            "Incorrect"->{
-//                                Toast.makeText(context, missed, Toast.LENGTH_SHORT).show()
-//                            }
-//                            "Doesnt Exists"->{
-//                                Toast.makeText(context, notexists, Toast.LENGTH_SHORT).show()
-//                            }
-////                            else-> {
-////                                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-////                            }
-//                        }
-//                    }
                     val url = "http://${direction.value}:3000/user/data"
                     val queue = Volley.newRequestQueue(context)
                     val body = JSONObject().apply {
@@ -198,6 +193,40 @@ fun Login(
             ) {
                 Text(text = stringResource(id = R.string.login))
             }
+        }
+        FilledTonalIconButton(onClick = {
+            val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Autenticate")
+                .setSubtitle("Autenticate with your fingerprint")
+                .setNegativeButtonText("Cancel")
+                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                .build()
+            val bioPrompt = BiometricPrompt(fragment, fragment.mainExecutor, object: BiometricPrompt.AuthenticationCallback(){
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    navHost.navigate("master")
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    Toast.makeText(context, "Cannot autenticate", Toast.LENGTH_SHORT).show()
+                }
+            })
+            bioPrompt.authenticate(promptInfo)
+        },
+            enabled = canAuth and saved.value.isNotBlank(),
+            modifier = modifier
+                .size(100.dp)
+                .padding(top = spacing),
+        ) {
+            Icon(Icons.Rounded.Fingerprint, contentDescription = null, modifier = modifier
+                .fillMaxSize()
+                .padding(spacing))
         }
     }
 }

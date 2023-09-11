@@ -40,10 +40,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -55,6 +57,7 @@ import com.miiky.houser.R
 import com.miiky.houser.ui.BottomAnimatedItem
 import com.miiky.houser.ui.BottomNavItem
 import com.miiky.houser.ui.screens.house.CreateHouse
+import com.miiky.houser.ui.screens.house.EditHouse
 import com.miiky.houser.ui.space_bottom
 import com.miiky.houser.ui.spacing
 
@@ -132,40 +135,10 @@ fun MainMaster(
             composable("create"){
                 CreateHouse(navHost = navControl)
             }
+            composable("edit"){
+                EditHouse(navHost = navControl)
+            }
         }
-        // Linea de circunvalacion antigua sobre la que corria el bottom navigation con iconos estaticos
-//        NavigationBar(modifier = modifier.fillMaxWidth()) {
-//            items.forEach { item ->
-//                val selected = item.route == backStackEntry.value?.destination?.route
-//                NavigationBarItem(
-//                    selected = selected,
-//                    onClick = { navControl.navigate(item.route) },
-//                    label = {
-//                        Text(
-//                            text = item.title,
-//                            fontWeight = FontWeight.SemiBold,
-//                        )
-//                    },
-//                    icon = {
-//                        Crossfade(selected, label = "Justa") {
-//                            if (!it) {
-//                                Icon(
-//                                    imageVector = item.icon,
-//                                    contentDescription = "${item.title} Icon",
-//                                )
-//                            } else {
-//                                Icon(
-//                                    imageVector = item.alticon,
-//                                    contentDescription = "${item.title} Icon",
-//                                )
-//                            }
-//                        }
-//
-//                    },
-//                    alwaysShowLabel = false
-//                )
-//            }
-//        }
         NavigationBar(modifier = modifier.fillMaxWidth()) {
             anitems.forEach { item ->
                 val icon by rememberLottieComposition(spec = item.icon)
